@@ -6,36 +6,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
     <div class="cards">
         <div class="search">
-            <input type="text" placeholder="enter city name" spellcheck="false">
-            <button></button>
+            <input type="text" id="city-input" placeholder="Enter city name" spellcheck="false">
+            <button id="search-btn" class="search-btn">
+                <img src="../image/search.png" alt="Search">
+            </button>
+        </div>
+        <div class="error">
+            <p>Invalid city name</p>
         </div>
         <div class="Weather">
-            <img src="image/rain image.jpeg" class="weather-icon">
-            <h1 class="temp">22°C</h1>
-            <h2 class="city">New York</h2>
+            <div class="date" id="date">Monday, 20th March</div>
+            <div class="weather-icon" id="weather-icon">
+                <img src="../image/clouds.png" alt="Weather Icon">
+            </div>
+            <h1 class="temp" id="temp">22°C</h1>
+            <h2 class="city" id="city">New York</h2>
             <div class="details">
                 <div class="col">
-                    <img src="image/humidity.png">
+                    <img src="../image/humidity.png" alt="Humidity Icon">
                     <div>
-                     <p class="humidity">50%</p>
-                     <p>Humidity</p>   
+                        <p class="humidity" id="humidity">50%</p>
+                        <p>Humidity</p>
                     </div>
                 </div>
                 <div class="col">
-                    <img src="image/wind.png">
+                    <img src="../image/wind.png" alt="Wind Icon">
                     <div>
-                     <p class="wind">15 km/h</p>
-                     <p>wind speed</p>   
+                        <p class="wind" id="wind">15 km/h</p>
+                        <p>Wind Speed</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        const apiKey = "2d351b0d00e4f5c2aa9f3811ccbe7b37";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+    
+        const searchBox = document.querySelector("#city-input");
+        const searchBtn = document.querySelector("#search-btn");
+    
+        async function checkWeather(city) {
+            if (!city.trim()) { // Check if the city input is empty or only contains whitespace
+                document.querySelector(".Weather").style.display = "none";
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".error").innerText = "Please enter a city name.";
+                return; // Exit the function
+            }
+    
+            const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
+            if (response.status == 404) {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".error").innerText = "Invalid city name.";
+                document.querySelector(".Weather").style.display = "none";
+            } else {
+                const data = await response.json();
+    
+                // Update weather details
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+    
+                // Update weather icon
+                const weatherCondition = data.weather[0].main;
+                const weatherIcons = {
+                    Clouds: "../image/clouds.png",
+                    Clear: "../image/clear.png",
+                    Rain: "../image/rain.png",
+                    Snow: "../image/snow.png",
+                    Thunderstorm: "../image/thunder.png",
+                };
+                const iconSrc = weatherIcons[weatherCondition] || "../image/default.png";
+                document.querySelector(".weather-icon").innerHTML = `<img src="${iconSrc}" alt="Weather Icon">`; // Fixed this line
+    
+                // Update date using timezone
+                const timezoneOffset = data.timezone; // in seconds
+                const localTime = new Date(new Date().getTime() + timezoneOffset * 1000);
+                const options = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
+                document.querySelector("#date").innerHTML = new Intl.DateTimeFormat("en-US", options).format(localTime);
+    
+                // Show weather details and hide error
+                document.querySelector(".Weather").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+            }
+        }
+    
+        searchBtn.addEventListener("click", () => {
+            checkWeather(searchBox.value);
+        });
+    </script>
+    
+
+
+    </script>
 </body>
 
 </html>
