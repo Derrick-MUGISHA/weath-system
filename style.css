@@ -149,26 +149,26 @@ body {
     }
    
 }
-@media (max-width: 600px) {
-   .search {
-       flex-direction: column;
-   }
-   
-   .search input {
-       margin-right: 0;
-       margin-bottom: 20px;
-   }
-   
-   .details {
-       flex-direction: column;
-       gap: 20px;
-   }
-   
-   .temp {
-       font-size: 60px;
-   }
-   
-   .city {
-       font-size: 35px;
-   }
-}
+ @media (max-width: 600px) {
+            .search {
+                flex-direction: column;
+            }
+            
+            .search input {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .details {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .temp {
+                font-size: 60px;
+            }
+            
+            .city {
+                font-size: 35px;
+            }
+        }
