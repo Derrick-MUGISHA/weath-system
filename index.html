@@ -6,28 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
     <div class="cards">
         <div class="search">
             <input type="text" placeholder="enter city name" spellcheck="false">
-            <button></button>
+           <button class="search-btn"><img src="../image/search.png"></button>
         </div>
         <div class="Weather">
-            <img src="image/rain image.jpeg" class="weather-icon">
+            <div class="date">Monday, 20th March</div>
+            <div class="weather-icon">
+                <img src="../image/clouds.png">
+            </div>
+        </div>
             <h1 class="temp">22°C</h1>
             <h2 class="city">New York</h2>
             <div class="details">
                 <div class="col">
-                    <img src="image/humidity.png">
+                    <img src="../image/humidity.png">
                     <div>
                      <p class="humidity">50%</p>
                      <p>Humidity</p>   
                     </div>
                 </div>
                 <div class="col">
-                    <img src="image/wind.png">
+                    <img src="../image/wind.png">
                     <div>
                      <p class="wind">15 km/h</p>
                      <p>wind speed</p>   
