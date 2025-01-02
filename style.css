@@ -72,6 +72,7 @@ body {
    align-items: center;
    justify-content: space-between;
    flex-wrap: wrap;
+   display: none;
 }
 
 .temp {
@@ -109,6 +110,7 @@ body {
 .humidity,
 .wind {
    font-size: 28px;
+
 }
 
 .error {
