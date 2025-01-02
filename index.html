@@ -50,53 +50,63 @@
     </div>
 
     <script>
-        const apiKey = "2d351b0d00e4f5c2aa9f3811ccbe7b37";
-        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+       const apiKey = "2d351b0d00e4f5c2aa9f3811ccbe7b37";
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
-        const searchBox = document.querySelector("#city-input");
-        const searchBtn = document.querySelector("#search-btn");
-        const weatherIcon = document.querySelector(".weather-icon");
+const searchBox = document.querySelector("#city-input");
+const searchBtn = document.querySelector("#search-btn");
+const weatherIcon = document.querySelector(".weather-icon");
 
-        async function checkWeather(city) {
-            const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
-            if (response.status == 404) {
-                document.querySelector(".error").style.display = "block";
-                document.querySelector(".Weather").style.display = "none";
-            } else {
-                const data = await response.json();
+async function checkWeather(city) {
+    if (!city.trim()) { // Check if the city input is empty or only contains whitespace
+        document.querySelector(".Weather").style.display = "none";
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".error").innerText = "Please enter a city name.";
+        return; // Exit the function
+    }
 
-                // Update weather details
-                document.querySelector(".city").innerHTML = data.name;
-                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
-                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
-                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+    const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+    if (response.status == 404) {
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".error").innerText = "Invalid city name.";
+        document.querySelector(".Weather").style.display = "none";
+    } else {
+        const data = await response.json();
 
-                // Update weather icon
-                const weatherCondition = data.weather[0].main;
-                const weatherIcons = {
-                    Clouds: "../image/clouds.png",
-                    Clear: "../image/clear.png",
-                    Rain: "../image/rain.png",
-                    Snow: "../image/snow.png",
-                    Thunderstorm: "../image/thunder.png",
-                };
-                const iconSrc = weatherIcons[weatherCondition] || "../image/default.png";
-                document.querySelector(".weather-icon").innerHTML = `<img src="${iconSrc}" alt="Weather Icon">`;
+        // Update weather details
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+        document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+        document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
 
-                // Update date using timezone
-                const timezoneOffset = data.timezone; // in seconds
-                const localTime = new Date(new Date().getTime() + timezoneOffset * 1000);
-                const options = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
-                document.querySelector("#date").innerHTML = new Intl.DateTimeFormat("en-US", options).format(localTime);
+        // Update weather icon
+        const weatherCondition = data.weather[0].main;
+        const weatherIcons = {
+            Clouds: "../image/clouds.png",
+            Clear: "../image/clear.png",
+            Rain: "../image/rain.png",
+            Snow: "../image/snow.png",
+            Thunderstorm: "../image/thunder.png",
+        };
+        const iconSrc = weatherIcons[weatherCondition] || "../image/default.png";
+        document.querySelector(".weather-icon").innerHTML = `<img src="${iconSrc}" alt="Weather Icon">`;
 
-                document.querySelector(".Weather").style.display = "block";
-                document.querySelector(".error").style.display = "none";
-            }
-        }
+        // Update date using timezone
+        const timezoneOffset = data.timezone; // in seconds
+        const localTime = new Date(new Date().getTime() + timezoneOffset * 1000);
+        const options = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
+        document.querySelector("#date").innerHTML = new Intl.DateTimeFormat("en-US", options).format(localTime);
 
-        searchBtn.addEventListener("click", () => {
-            checkWeather(searchBox.value);
-        });
+        // Show weather details and hide error
+        document.querySelector(".Weather").style.display = "block";
+        document.querySelector(".error").style.display = "none";
+    }
+}
+
+searchBtn.addEventListener("click", () => {
+    checkWeather(searchBox.value);
+});
+
     </script>
 </body>
 
