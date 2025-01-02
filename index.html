@@ -13,39 +13,72 @@
 <body>
     <div class="cards">
         <div class="search">
-            <input type="text" placeholder="enter city name" spellcheck="false">
-           <button class="search-btn"><img src="../image/search.png"></button>
+            <input type="text" id="city-input" placeholder="Enter city name" spellcheck="false">
+            <button id="search-btn" class="search-btn"><img src="../image/search.png" alt="Search"></button>
         </div>
         <div class="Weather">
-            <div class="date">Monday, 20th March</div>
-            <div class="weather-icon">
-                <img src="../image/clouds.png">
+            <div class="date" id="date">Monday, 20th March</div>
+            <div class="weather-icon" id="weather-icon">
+                <img src="../image/clouds.png" alt="Weather Icon">
             </div>
         </div>
-            <h1 class="temp">22°C</h1>
-            <h2 class="city">New York</h2>
-            <div class="details">
-                <div class="col">
-                    <img src="../image/humidity.png">
-                    <div>
-                     <p class="humidity">50%</p>
-                     <p>Humidity</p>   
-                    </div>
+        <h1 class="temp" id="temp">22°C</h1>
+        <h2 class="city" id="city">New York</h2>
+        <div class="details">
+            <div class="col">
+                <img src="../image/humidity.png" alt="Humidity Icon">
+                <div>
+                    <p class="humidity" id="humidity">50%</p>
+                    <p>Humidity</p>
                 </div>
-                <div class="col">
-                    <img src="../image/wind.png">
-                    <div>
-                     <p class="wind">15 km/h</p>
-                     <p>wind speed</p>   
-                    </div>
+            </div>
+            <div class="col">
+                <img src="../image/wind.png" alt="Wind Icon">
+                <div>
+                    <p class="wind" id="wind">15 km/h</p>
+                    <p>Wind Speed</p>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         // Your API Key
         const apiKey = "863242cfb2b1d357e6093d9a4df19a4b";
-        const apiUrl = "";
+
+        // Function to fetch weather data
+        async function fetchWeather(city) {
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error("City not found");
+                const data = await response.json();
+
+                // Update the DOM with weather data
+                document.getElementById('temp').textContent = `${Math.round(data.main.temp)}°C`;
+                document.getElementById('city').textContent = data.name;
+                document.getElementById('humidity').textContent = `${data.main.humidity}%`;
+                document.getElementById('wind').textContent = `${data.wind.speed} km/h`;
+
+                // Update the weather icon
+                const iconCode = data.weather[0].icon;
+                const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+                document.getElementById('weather-icon').innerHTML = `<img src="${iconUrl}" alt="Weather Icon">`;
+
+                // Update the date
+                const date = new Date();
+                const options = { weekday: 'long', month: 'long', day: 'numeric' };
+                document.getElementById('date').textContent = date.toLocaleDateString(undefined, options);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // Add event listener to the search button
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const city = document.getElementById('city-input').value;
+            if (city) fetchWeather(city);
+        });
     </script>
 </body>
 
