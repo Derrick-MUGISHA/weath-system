@@ -16,7 +16,9 @@
     <div class="cards">
         <div class="search">
             <input type="text" id="city-input" placeholder="Enter city name" spellcheck="false">
-            <button id="search-btn" class="search-btn"><img src="../image/search.png" alt="Search"></button>
+            <button id="search-btn" class="search-btn">
+                <img src="../image/search.png" alt="Search">
+            </button>
         </div>
         <div class="error">
             <p>Invalid city name</p>
@@ -26,22 +28,22 @@
             <div class="weather-icon" id="weather-icon">
                 <img src="../image/clouds.png" alt="Weather Icon">
             </div>
-        </div>
-        <h1 class="temp" id="temp">22°C</h1>
-        <h2 class="city" id="city">New York</h2>
-        <div class="details">
-            <div class="col">
-                <img src="../image/humidity.png" alt="Humidity Icon">
-                <div>
-                    <p class="humidity" id="humidity">50%</p>
-                    <p>Humidity</p>
+            <h1 class="temp" id="temp">22°C</h1>
+            <h2 class="city" id="city">New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="../image/humidity.png" alt="Humidity Icon">
+                    <div>
+                        <p class="humidity" id="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
                 </div>
-            </div>
-            <div class="col">
-                <img src="../image/wind.png" alt="Wind Icon">
-                <div>
-                    <p class="wind" id="wind">15 km/h</p>
-                    <p>Wind Speed</p>
+                <div class="col">
+                    <img src="../image/wind.png" alt="Wind Icon">
+                    <div>
+                        <p class="wind" id="wind">15 km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,49 +53,50 @@
         const apiKey = "2d351b0d00e4f5c2aa9f3811ccbe7b37";
         const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
-        const searchBox = document.querySelector(".search-input");
-        const searchBtn = document.querySelector(".search-btn");
+        const searchBox = document.querySelector("#city-input");
+        const searchBtn = document.querySelector("#search-btn");
         const weatherIcon = document.querySelector(".weather-icon");
 
-
         async function checkWeather(city) {
+            const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+            if (response.status == 404) {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".Weather").style.display = "none";
+            } else {
+                const data = await response.json();
 
-        const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+                // Update weather details
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
 
-        if (response.status == 404) {
+                // Update weather icon
+                const weatherCondition = data.weather[0].main;
+                const weatherIcons = {
+                    Clouds: "../image/clouds.png",
+                    Clear: "../image/clear.png",
+                    Rain: "../image/rain.png",
+                    Snow: "../image/snow.png",
+                    Thunderstorm: "../image/thunder.png",
+                };
+                const iconSrc = weatherIcons[weatherCondition] || "../image/default.png";
+                document.querySelector(".weather-icon").innerHTML = `<img src="${iconSrc}" alt="Weather Icon">`;
 
-            document.querySelector(".error").style.display = "block";
-            document.querySelector(".Weather").style.display = "none";
-        }else {
-            var data = await response.json();
+                // Update date using timezone
+                const timezoneOffset = data.timezone; // in seconds
+                const localTime = new Date(new Date().getTime() + timezoneOffset * 1000);
+                const options = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
+                document.querySelector("#date").innerHTML = new Intl.DateTimeFormat("en-US", options).format(localTime);
 
-document.querySelector(".city").innerHTML = data.name;
-document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
-document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
-document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
-
-if (data.weather[0].main == "Clouds") {
-    document.querySelector(".weather-icon").innerHTML = "<img src='../image/clouds.png' alt='Weather Icon'>";
-} else if (data.weather[0].main == "Clear") {
-    document.querySelector(".weather-icon").innerHTML = "<img src='../image/clear.png' alt='Weather Icon'>";
-} else if (data.weather[0].main == "Rain") {
-    document.querySelector(".weather-icon").innerHTML = "<img src='../image/rain.png' alt='Weather Icon'>";
-} else if (data.weather[0].main == "Snow") {
-    document.querySelector(".weather-icon").innerHTML = "<img src='../image/snow.png' alt='Weather Icon'>";
-} else if (data.weather[0].main == "Thunderstorm") {
-    document.querySelector(".weather-icon").innerHTML = "<img src='../image/thunder.png' alt='Weather Icon'>";
-}
-
-document.querySelector(".Weather").style.display = "block";
-document.querySelector(".error").style.display = "none";
-        }
-        
-
+                document.querySelector(".Weather").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+            }
         }
 
         searchBtn.addEventListener("click", () => {
-             checkWeather(searchBox.value);
-        })
+            checkWeather(searchBox.value);
+        });
     </script>
 </body>
 
